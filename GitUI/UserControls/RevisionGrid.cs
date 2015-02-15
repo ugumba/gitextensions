@@ -1507,15 +1507,15 @@ namespace GitUI
                 else if (columnIndex == authorColIndex)
                 {
                     var text = (string)e.FormattedValue;
-                    e.Graphics.DrawString(text, rowFont, foreBrush,
-                                          new PointF(e.CellBounds.Left, e.CellBounds.Top + 4));
+                    e.Graphics.DrawString(text, rowFont, foreBrush, 
+                        new PointF(e.CellBounds.Left, e.CellBounds.Top + 0));
                 }
                 else if (columnIndex == dateColIndex)
                 {
                     var time = AppSettings.ShowAuthorDate ? revision.AuthorDate : revision.CommitDate;
                     var text = TimeToString(time);
-                    e.Graphics.DrawString(text, rowFont, foreBrush,
-                                          new PointF(e.CellBounds.Left, e.CellBounds.Top + 4));
+                    e.Graphics.DrawString(text, rowFont, foreBrush, 
+                        new PointF(e.CellBounds.Left, e.CellBounds.Top + 0));
                 }
                 else if (columnIndex == BuildServerWatcher.BuildStatusImageColumnIndex)
                 {
@@ -1529,7 +1529,7 @@ namespace GitUI
                 {
                     var text = (string)e.FormattedValue;
                     e.Graphics.DrawString(text, rowFont, foreBrush,
-                                            new PointF(e.CellBounds.Left, e.CellBounds.Top + 4));
+                                            new PointF(e.CellBounds.Left, e.CellBounds.Top + 0));
                 }
             }
         }
@@ -1575,7 +1575,7 @@ namespace GitUI
                                                            headColor, headBounds.X,
                                                            headBounds.Y,
                                                            RoundToEven(textSize.Width + 3),
-                                                           RoundToEven(textSize.Height), 3,
+                                                           RoundToEven(textSize.Height), 0.1f,
                                                            arrowType, dashedLine, fill);
 
                     offset += extraOffset;
@@ -1695,7 +1695,7 @@ namespace GitUI
 
         private static Rectangle AdjustCellBounds(Rectangle cellBounds, float offset)
         {
-            return new Rectangle((int)(cellBounds.Left + offset), cellBounds.Top + 4,
+            return new Rectangle((int)(cellBounds.Left + offset), cellBounds.Top + 1,
                                  cellBounds.Width - (int)offset, cellBounds.Height);
         }
 
@@ -2761,7 +2761,7 @@ namespace GitUI
                 {
                     using (var graphics = Graphics.FromHwnd(Handle))
                     {
-                        _rowHeigth = (int)graphics.MeasureString("By", NormalFont).Height + 9;
+                        _rowHeigth = (int)graphics.MeasureString("By", NormalFont).Height + 2;
                     }
 
                     _selectedItemBrush = SystemBrushes.Highlight;

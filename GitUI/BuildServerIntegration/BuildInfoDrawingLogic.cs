@@ -39,7 +39,7 @@ namespace GitUI.BuildServerIntegration
 
                 if (buildStatusImage != null)
                 {
-                    e.Graphics.DrawImage(buildStatusImage, new Rectangle(e.CellBounds.Left, e.CellBounds.Top + 4, 16, 16));
+                    e.Graphics.DrawImage(buildStatusImage, new Rectangle(e.CellBounds.Left, e.CellBounds.Top + 1, 16, 16));
                 }
             }
         }
@@ -70,7 +70,7 @@ namespace GitUI.BuildServerIntegration
                 }
 
                 var text = (string)e.FormattedValue;
-                e.Graphics.DrawString(text, rowFont, buildStatusForebrush, new PointF(e.CellBounds.Left, e.CellBounds.Top + 4));
+                e.Graphics.DrawString(text, rowFont, buildStatusForebrush, new PointF(e.CellBounds.Left, e.CellBounds.Top + 0));
             }
         }
 

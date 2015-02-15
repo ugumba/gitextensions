@@ -141,7 +141,9 @@ namespace GitUI
             Revisions.DragEnter += Revisions_DragEnter;
             Revisions.DragDrop += Revisions_DragDrop;
             Revisions.AllowDrop = true;
+
             Revisions.ColumnHeadersVisible = false;
+            Revisions.IdColumn.Visible = AppSettings.ShowIds;
 
             IsMessageMultilineDataGridViewColumn.Width = 25;
             IsMessageMultilineDataGridViewColumn.DisplayIndex = 2;
@@ -204,6 +206,7 @@ namespace GitUI
                 _normalFont = value;
                 MessageDataGridViewColumn.DefaultCellStyle.Font = _normalFont;
                 DateDataGridViewColumn.DefaultCellStyle.Font = _normalFont;
+                IdDataGridViewColumn.DefaultCellStyle.Font = new Font("Consolas", _normalFont.SizeInPoints);
                 IsMessageMultilineDataGridViewColumn.DefaultCellStyle.Font = _normalFont;
 
                 RefsFont = IsFilledBranchesLayout() ? _normalFont : new Font(_normalFont, FontStyle.Bold);
@@ -1306,6 +1309,7 @@ namespace GitUI
             int messageColIndex = MessageDataGridViewColumn.Index;
             int authorColIndex = AuthorDataGridViewColumn.Index;
             int dateColIndex = DateDataGridViewColumn.Index;
+            int idColIndex = IdDataGridViewColumn.Index;
             int isMsgMultilineColIndex = IsMessageMultilineDataGridViewColumn.Index;
 
             // The graph column is handled by the DvcsGraph
@@ -1525,15 +1529,24 @@ namespace GitUI
                 else if (columnIndex == authorColIndex)
                 {
                     var text = (string)e.FormattedValue;
-                    e.Graphics.DrawString(text, rowFont, foreBrush,
-                                          new PointF(e.CellBounds.Left, e.CellBounds.Top + 4));
+                    e.Graphics.DrawString(text, rowFont, foreBrush, 
+                        new PointF(e.CellBounds.Left, e.CellBounds.Top + 0));
                 }
                 else if (columnIndex == dateColIndex)
                 {
                     var time = AppSettings.ShowAuthorDate ? revision.AuthorDate : revision.CommitDate;
                     var text = TimeToString(time);
-                    e.Graphics.DrawString(text, rowFont, foreBrush,
-                                          new PointF(e.CellBounds.Left, e.CellBounds.Top + 4));
+                    e.Graphics.DrawString(text, rowFont, foreBrush, 
+                        new PointF(e.CellBounds.Left, e.CellBounds.Top + 0));
+                }
+                else if (columnIndex == idColIndex)
+                {
+                    if (!revision.IsArtificial())
+                    { 
+                        var text = revision.Guid;
+                        e.Graphics.DrawString(text, new Font("Consolas", rowFont.SizeInPoints), foreBrush, 
+                                              new PointF(e.CellBounds.Left, e.CellBounds.Top + 4));
+                    }
                 }
                 else if (columnIndex == BuildServerWatcher.BuildStatusImageColumnIndex)
                 {
@@ -1547,7 +1560,7 @@ namespace GitUI
                 {
                     var text = (string)e.FormattedValue;
                     e.Graphics.DrawString(text, rowFont, foreBrush,
-                                            new PointF(e.CellBounds.Left, e.CellBounds.Top + 4));
+                                            new PointF(e.CellBounds.Left, e.CellBounds.Top + 0));
                 }
             }
         }
@@ -1600,7 +1613,7 @@ namespace GitUI
                                                            headColor, headBounds.X,
                                                            headBounds.Y,
                                                            RoundToEven(textSize.Width + 3),
-                                                           RoundToEven(textSize.Height), 3,
+                                                           RoundToEven(textSize.Height), 0.1f,
                                                            arrowType, dashedLine, fill);
 
                     offset += extraOffset;
@@ -1720,7 +1733,7 @@ namespace GitUI
 
         private static Rectangle AdjustCellBounds(Rectangle cellBounds, float offset)
         {
-            return new Rectangle((int)(cellBounds.Left + offset), cellBounds.Top + 4,
+            return new Rectangle((int)(cellBounds.Left + offset), cellBounds.Top + 1,
                                  cellBounds.Width - (int)offset, cellBounds.Height);
         }
 
@@ -2727,6 +2740,14 @@ namespace GitUI
             Refresh();
         }
 
+        internal void ShowIds_ToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            AppSettings.ShowIds = !AppSettings.ShowIds;
+            Revisions.IdColumn.Visible = AppSettings.ShowIds;
+            _revisionGridMenuCommands.TriggerMenuChanged();
+            Refresh();
+        }
+
         public void ToggleRevisionCardLayout()
         {
             var layouts = new List<RevisionGridLayout>((RevisionGridLayout[])Enum.GetValues(typeof(RevisionGridLayout)));
@@ -2789,7 +2810,7 @@ namespace GitUI
                 {
                     using (var graphics = Graphics.FromHwnd(Handle))
                     {
-                        _rowHeigth = (int)graphics.MeasureString("By", NormalFont).Height + 9;
+                        _rowHeigth = (int)graphics.MeasureString("By", NormalFont).Height + 2;
                     }
 
                     _selectedItemBrush = SystemBrushes.Highlight;
